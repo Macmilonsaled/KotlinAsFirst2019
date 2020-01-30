@@ -170,7 +170,35 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val romanToIntMapping = mapOf(
+        'M' to 1000,
+        'D' to 500,
+        'C' to 100,
+        'L' to 50,
+        'X' to 10,
+        'V' to 5,
+        'I' to 1
+    )
+
+    var result = 0
+
+    for (i in roman.indices) {
+        val value = romanToIntMapping[roman[i]]
+        try {
+            if (i + 1 < roman.length && romanToIntMapping[roman[i + 1]]!! > value!!) {
+                // counts as a negative
+                result -= value
+            } else {
+                result += value!!
+            }
+        } catch (e: NullPointerException) {
+            return -1
+        }
+    }
+
+    return result
+}
 
 /**
  * Очень сложная

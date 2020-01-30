@@ -3,6 +3,7 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import java.lang.StringBuilder
 import kotlin.math.sqrt
 
 /**
@@ -236,7 +237,30 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    var n_ = n
+
+    val romanNumerals = arrayOf(
+        "M", "CM", "D", "CD", "C", "XC",
+        "L", "XL", "X", "IX", "V", "IV", "I"
+    )
+    val associatedNumbers = arrayOf(
+        1000, 900, 500, 400, 100, 90,
+        50, 40, 10, 9, 5, 4, 1
+    )
+
+    val result = StringBuilder();
+
+    for (i in associatedNumbers.indices) {
+        val count = n_ / associatedNumbers[i]
+        for (throwaway in 0 until count) {
+            result.append(romanNumerals[i])
+            n_ -= associatedNumbers[i]
+        }
+    }
+
+    return result.toString()
+}
 
 /**
  * Очень сложная

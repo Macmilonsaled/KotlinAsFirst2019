@@ -3,6 +3,7 @@
 package lesson3.task1
 
 import kotlin.math.sqrt
+import kotlin.math.pow
 
 /**
  * Пример
@@ -75,7 +76,7 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int = (2 until n).fold(1 to 1) { (prev, curr), _ -> curr to (prev + curr) }.second
 
 /**
  * Простая
@@ -198,6 +199,19 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  */
 fun squareSequenceDigit(n: Int): Int = TODO()
 
+fun countDigits(n: Int): Int {
+    var count = 0
+    var number = n
+    while (number != 0) {
+        number /= 10
+        count++
+    }
+
+    return count;
+}
+
+fun nthDigit(num: Int, n: Int): Int = num / (10.0.pow(n)).toInt() % 10
+
 /**
  * Сложная
  *
@@ -207,4 +221,16 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var totalDigits = 0;
+    var counter = 1;
+    var currFib = 1;
+
+    while (totalDigits < n) {
+        currFib = fib(counter)
+        totalDigits += countDigits(currFib)
+        counter++
+    }
+
+    return nthDigit(currFib, totalDigits - n)
+}

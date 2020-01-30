@@ -360,8 +360,112 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
+const val olOpen = "<ol>"
+const val olClose = "</ol>"
+
+const val ulOpen = "<ul>"
+const val ulClose = "</ul>"
+
+const val liOpen = "<li>"
+const val liClose = "</li>"
+
+fun countIndent(line: String): Int {
+    var count = 0;
+
+    for (c in line) {
+        if (c != ' ') break;
+        count++
+    }
+
+    return count
+}
+
+enum class ListType {
+    UL, OL
+}
+
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+
+    // int is for indent here
+    val openLists = mutableListOf<Pair<ListType, Int>>()
+    var pastFirst = false;
+
+    outputStream.append("<html><body>");
+
+    for (line in File(inputName).readLines()) {
+        if (line.isEmpty()) {
+            outputStream.newLine()
+            continue
+        }
+
+        val indent = countIndent(line)
+        val indentToCompareTo = if (openLists.isEmpty()) 0 else openLists.last().second
+
+        val trimmedLine = line.trimStart()
+
+        val isUlLine = trimmedLine[0] == '*'
+
+        val indentGrew = indent > indentToCompareTo;
+        val indentWasSame = indent == indentToCompareTo;
+        val indentShrank = indent < indentToCompareTo;
+
+        val delimiter = if (isUlLine) '*' else '.'
+        val rest = trimmedLine.split(delimiter)[1]
+
+        if (!pastFirst) {
+            pastFirst = true
+            if (isUlLine) {
+                outputStream.append(ulOpen)
+                outputStream.append(liOpen)
+                outputStream.append(rest)
+                openLists.add(Pair(ListType.UL, indent))
+            } else {
+                outputStream.append(olOpen)
+                outputStream.append(liOpen)
+                outputStream.append(rest)
+                openLists.add(Pair(ListType.OL, indent))
+            }
+        } else {
+            if (indentGrew) {
+                if (isUlLine) {
+                    outputStream.append(ulOpen)
+                    outputStream.append(liOpen)
+                    outputStream.append(rest)
+                    openLists.add(Pair(ListType.UL, indent))
+                } else {
+                    outputStream.append(olOpen)
+                    outputStream.append(liOpen)
+                    outputStream.append(rest)
+                    openLists.add(Pair(ListType.OL, indent))
+                }
+            }
+
+            if (indentWasSame && indent != 0) {
+                outputStream.append(liOpen)
+                outputStream.append(rest)
+                outputStream.append(liClose)
+            }
+
+            if (indentShrank) {
+                if (openLists.last().first == ListType.UL) {
+                    outputStream.append(liClose)
+                    outputStream.append(ulClose)
+                } else {
+                    outputStream.append(liClose)
+                    outputStream.append(olClose)
+                }
+
+                openLists.removeAt(openLists.size - 1)
+                outputStream.append(liOpen)
+                outputStream.append(rest)
+                outputStream.append(liClose)
+            }
+        }
+        }
+
+    outputStream.append("</body><html>");
+    outputStream.close()
 }
 
 /**

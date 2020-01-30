@@ -257,7 +257,29 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    val sortedList = list.sorted()
+
+    for (i in sortedList.indices) {
+        // the number we are looking for
+        val compliment = number - sortedList[i]
+        // no negative numbers here
+        if (compliment < 0) continue
+
+        // our list is sorted. we'll look for our compliment from the end of our list.
+        for (j in sortedList.indices.reversed()) {
+            // special case: same element.
+            if (i == j) break
+
+            if (sortedList[j] == compliment) {
+                // found our compliment
+                return Pair(i, j)
+            }
+        }
+    }
+
+    return Pair(-1, -1)
+}
 
 /**
  * Очень сложная
